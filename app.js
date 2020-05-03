@@ -1,15 +1,17 @@
 const express = require("express");
 const app = express();
 const https = require("https");
+const bodyParser = require("body-parser");
 
-
-app.get("/", function(request, response) {
-    res.send("Server is up and running fine")
+app.use(bodyParser.urlencoded({extended: true}));
+app.get("/", function(req, res) {
+    res.sendFile(__dirname + "/index.html");
 });
 
-
-app.get("/weather", function(req, res) {
-    const weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=Bengaluru&units=metric&appid=eaad74664db8f169ab4d1437f0d32d25";
+app.post("/", function(req, res) {
+    console.log(req.body.cityName);
+    const query = req.body.cityName;
+    const weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&units=metric&appid=eaad74664db8f169ab4d1437f0d32d25";
     https.get(weatherURL, function(response) {
         console.log(response.statusCode);
         response.on("data", function(data) {
@@ -25,5 +27,5 @@ app.get("/weather", function(req, res) {
 });
 
 app.listen(3000, function() {
-    console.log("Server is running on port 3000")
+    console.log("Server starting")
 });
